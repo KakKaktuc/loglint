@@ -1,14 +1,13 @@
 package src
 
 import (
-	"log/slog"
-	"go.uber.org/zap"
+	fakelog "github.com/KakKaktuc/loglint/checker_test/testdata/src/fakelog"
+	fakeslog "github.com/KakKaktuc/loglint/checker_test/testdata/src/fakeslog"
 )
 
 func main() {
-	logger, _ := zap.NewProduction()
-	defer logger.Sync()
-
+	logger := &fakelog.Logger{}
+	slog := &fakeslog.Logger{}
 	password := "123"
 	apiKey := "abc"
 

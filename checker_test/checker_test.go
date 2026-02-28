@@ -2,9 +2,8 @@ package checker_test
 
 import (
 	"testing"
-
-	"loglint/checker"
-
+	
+	"github.com/KakKaktuc/loglint/checker"
 	"golang.org/x/tools/go/analysis/analysistest"
 )
 
