@@ -1,0 +1,5 @@
+linters-settings:
+  loglint:
+    type: path
+    path: ./loglint.exe
+    description: "Checks slog and zap log messages"

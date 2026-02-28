@@ -18,7 +18,6 @@ var Analyzer = &analysis.Analyzer{
 }
 
 var (
-	englishRegex   = regexp.MustCompile(`^[A-Za-z0-9\s\.\,\:\-]+$`)
 	sensitiveRegex = regexp.MustCompile(`(?i)(password|token|secret|apikey|api_key|pwd|key=)`)
 )
 
@@ -110,7 +109,13 @@ func validateMessage(pass *analysis.Pass, node ast.Node, expr ast.Expr) {
 		return
 	}
 
-	// 1️⃣ ASCII check
+	// sensitive data — проверяем первым
+	if sensitiveRegex.MatchString(msg) && (strings.Contains(msg, ":") || strings.Contains(msg, "=")) {
+		pass.Reportf(node.Pos(), "log message may contain sensitive data")
+		return // больше не проверяем другие правила
+	}
+
+	// ASCII check
 	for _, r := range msg {
 		if r > unicode.MaxASCII {
 			pass.Reportf(node.Pos(), "log message must contain only english ascii characters with lowercase letters and allowed symbols")
@@ -118,18 +123,12 @@ func validateMessage(pass *analysis.Pass, node ast.Node, expr ast.Expr) {
 		}
 	}
 
-	// 2️⃣ allowed characters
+	// allowed characters + lowercase
 	for _, r := range msg {
 		if !(unicode.IsLower(r) || unicode.IsDigit(r) || strings.ContainsRune(" .,:-", r)) {
 			pass.Reportf(node.Pos(), "log message must contain only lowercase english letters and allowed characters")
 			return
 		}
-	}
-
-	// 3️⃣ sensitive data
-	// проверяем только если есть ключевое слово + символ разделения (: или =)
-	if sensitiveRegex.MatchString(msg) && (strings.Contains(msg, ":") || strings.Contains(msg, "=")) {
-		pass.Reportf(node.Pos(), "log message may contain sensitive data")
 	}
 }
 
