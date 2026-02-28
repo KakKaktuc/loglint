@@ -1,7 +1,7 @@
 package main
 
 import (
-	"github.com/KakKaktuc/loglint/checker"
+	"loglint/checker"
 
 	"golang.org/x/tools/go/analysis/singlechecker"
 )
